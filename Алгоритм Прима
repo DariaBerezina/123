@@ -1,0 +1,93 @@
+using System;
+using System.IO;
+using System.Text;
+namespace Algoritm_Prima
+{
+    class Programm
+    {
+        static void Main()
+        {
+            int min = 0;
+            int n = 0, num_1 = 0, num_2 = 0, sum = 0;
+            int[,] matrix = null;
+            using (StreamReader sr = new StreamReader(@"C:\Users\User\Desktop\Files for programmes\prima.txt", Encoding.UTF8))
+            {
+                n = Convert.ToInt32(sr.ReadLine());
+                matrix = new int[n+1, n+1];
+                string str = null;
+                min = Convert.ToInt32(Math.Pow(10,5));
+                while ((str = sr.ReadLine()) != null)
+                {
+                    string[] mass = str.Split(' ');
+                    int a = int.Parse(mass[0]), b = int.Parse(mass[1]), c = int.Parse(mass[2]);
+                    matrix[a, b] = c;
+                    if (c < min)
+                    {
+                        min = c;
+                        num_2 = b;
+                        num_1= a;
+                    }
+                }
+            }
+            sum = min;
+            List<int> versh = new List<int>
+            {
+                num_1,
+                num_2
+            };
+            List<int> versh_2 = new List<int>
+            {
+                1,2,3,4,5,6,7,8,9
+            };
+            versh_2.Remove(num_1); versh_2.Remove(num_2);
+            while (versh.Count != n)
+            {
+                int a = 0;
+                int local_min = Convert.ToInt32(Math.Pow(10,5));
+                foreach (int j in versh)
+                {
+                    foreach (int i in versh_2)
+                    {
+                        if (matrix[j, i] != 0 && !(versh.Contains(i)) && matrix[j, i] < local_min )
+                        {
+                            local_min = matrix[j, i];
+                            a = i;
+                        }
+                        if (matrix[i, j] != 0 && !(versh.Contains(i)) && matrix[i, j] < local_min)
+                        {
+                            local_min = matrix[i, j];
+                            a = i;
+                        }
+                    }
+
+                }
+                if (local_min != Convert.ToInt32(Math.Pow(10, 5)));
+                {
+                    sum += local_min;
+                }
+                versh_2.Remove(a);
+                versh.Add((int)a);
+            }
+            Console.WriteLine(sum);
+        }
+    }
+}
+
+//Содержимое файла:
+//9
+//1 2 15
+//1 5 14
+//1 4 23
+//2 3 19
+//2 4 16
+//2 5 15
+//3 5 14
+//3 6 26
+//4 5 25
+//4 7 23
+//4 8 20
+//5 6 24
+//5 8 27
+//5 9 18
+//7 8 14
+//8 9 18
