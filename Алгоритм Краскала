@@ -1,0 +1,109 @@
+using System;
+using System.Globalization;
+using System.IO;
+using System.Text;
+namespace Algoritm_Kruskala
+{
+    class Programm
+    {
+        static int n = 0;
+        static List<string[]> list = new List<string[]>();
+        static List<int> weight = new List<int>();
+        static List<int[]> answer = new List<int[]>();
+        static void Main()
+        {
+            using (StreamReader sr = new StreamReader(@"C:\Users\User\Desktop\Files for programmes\prima.txt", Encoding.UTF8))
+            {
+                n = int.Parse(sr.ReadLine());
+                string str = null;
+                while ((str = sr.ReadLine())!= null)
+                {
+                    string[] m = str.Split(' ');
+                    list.Add(m);
+                    if (!weight.Contains(int.Parse(m[2])))
+                    {
+                        weight.Add(int.Parse(m[2]));
+                    }
+                }
+            }
+            weight.Sort();
+            int sum = 0;
+            for (int i = 1; i<n+1; i++)
+            {
+                int[] m = new int[1];
+                m[0] = i;
+                answer.Add(m);
+            }
+            foreach (int w in weight)
+            {
+                foreach (string[] m in list)
+                {
+                    if (int.Parse(m[2]) == w && w != 0)
+                    {
+                        int k = 0, j = 0, a = 0;
+                        for (int i = 0; i < answer.Count; i++)
+                        {
+                            if (k>0)
+                            {
+                                for (int l = 0; l < answer.Count; l++)
+                                {
+                                    if (answer[l].Contains(int.Parse(m[a])) && l != j )
+                                    {
+                                        answer[l] = answer[l].Except(new int[] { int.Parse(m[a]) }).ToArray();
+                                        foreach (int r in answer[l])
+                                        {
+                                            if (!answer[j].Contains(r))
+                                            {
+                                                answer[j] = answer[j].Append(r).ToArray();
+
+                                            }
+                                            answer[l] = answer[l].Except(new int[] { r }).ToArray();
+                                        }
+                                    }
+                                }
+                                k = 0; j = 0; a = 0;
+                                break;
+                            }
+                            else if (answer[i].Contains(int.Parse(m[0])) && !answer[i].Contains(int.Parse(m[1])))
+                            {
+                                answer[i] = answer[i].Append(int.Parse(m[1])).ToArray();
+                                k ++;
+                                j = i;
+                                a = 1;
+                                sum += w;
+                            }
+                            else if (!answer[i].Contains(int.Parse(m[0])) && answer[i].Contains(int.Parse(m[1])))
+                            {
+                                answer[i] = answer[i].Append(int.Parse(m[0])).ToArray();
+                                k ++;
+                                j = i;
+                                a = 0;
+                                sum += w;
+                            }
+                        }
+                    }
+                }
+            }
+            Console.WriteLine(sum);
+        }
+    }
+}
+
+//Содержимое файла:
+//9
+//1 2 15
+//1 5 14
+//1 4 23
+//2 3 19
+//2 4 16
+//2 5 15
+//3 5 14
+//3 6 26
+//4 5 25
+//4 7 23
+//4 8 20
+//5 6 24
+//5 8 27
+//5 9 18
+//7 8 14
+//8 9 18
