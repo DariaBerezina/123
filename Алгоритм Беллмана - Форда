@@ -1,0 +1,93 @@
+using System;
+using System.Text;
+using System.IO;
+using System.Collections.Generic;
+
+
+namespace ConsoleApplication26
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            int sch = 0;
+            int[,] matrix = null;
+            int n = 0;
+            using (StreamReader sr = new StreamReader(@"D:\Studying\дискретная математика\Алгоритм Форда-Беллмана\test.txt", Encoding.UTF8))
+            {
+                n = Convert.ToInt32(sr.ReadLine());
+                matrix = new int[n, n];
+                string str = null;
+                while ((str = sr.ReadLine()) != null)
+                {
+                    string[] s = str.Split(' ');
+                    matrix[int.Parse(s[0]) - 1, int.Parse(s[1]) - 1] = int.Parse(s[2]);
+                }
+            }
+            for (int i = 0; i < n; i++)
+            {
+                for (int j = 0; j < n; j++)
+                {
+                    if (matrix[i, j] == 0 && i != j)
+                    {
+                        matrix[i, j] = 1000000000;
+                    }
+                }
+            }
+            
+            int[,] answer = new int[n, n];
+            Console.WriteLine("Ниже введите номер вершины из которой хотите найти минимальные пути:");
+            int versh = int.Parse(Console.ReadLine())-1;
+            for (int i = 0; i < n; i++)
+            {
+                if (i != versh)
+                {
+                    answer[i, 0] = 1000000000;
+                }
+                if (i < n - 1)
+                {
+                    answer[versh, i] = 0;
+                }
+                
+
+                
+            }
+            for (int i = 0; i < n; i++)
+            {
+                for (int j = 0; j < n-1; j++)
+                {
+                    Console.Write(answer[i,j] + " ");
+                    if (j == n - 2)
+                    {
+                        Console.WriteLine();
+                    }
+                }
+
+            }
+            Console.WriteLine("End");
+
+            int mn = 1000000000;
+            for (int i = versh = 0; i < n; i++)
+            {
+                for (int j = 1; j < n; j++)
+                {
+                    if (i != versh)
+                    {
+                        for (int k = 0; k < n; k++)
+                        {
+                            mn = Math.Min(matrix[k, i] + answer[k, j - 1], mn);
+                        }
+                        answer[i,j] = mn;
+                        mn = 100000000;
+                    }
+                }
+            }
+            
+            for (int i = 0; i < n; i++)
+            {
+                Console.Write(answer[i, n - 2] + " "); 
+            }
+
+        }
+    }
+}
