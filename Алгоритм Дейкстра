@@ -1,0 +1,155 @@
+using System;
+using System.Text;
+using System.IO;
+using System.Collections.Generic;
+
+
+namespace ConsoleApplication26
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            int[,] matrix = null;
+            int n = 0;
+            using (StreamReader sr = new StreamReader(@"C:\Users\User\Desktop\dey.txt", Encoding.UTF8))
+            {
+                string str = null;
+                while ((str = sr.ReadLine()) != "")
+                {
+                    string[] s = str.Split(' ');
+                    if (s != null && s[0] != "")
+                    {
+                        int l_m = Math.Max(int.Parse(s[0]) + 1, int.Parse(s[1]) + 1);
+                        n = Math.Max(l_m, n);
+                    }
+                }
+            }
+            using (StreamReader sr = new StreamReader(@"C:\Users\User\Desktop\dey.txt", Encoding.UTF8))
+            {
+                string str = null;
+                matrix = new int[n, n];
+
+                while ((str = sr.ReadLine()) != null)
+                {
+                    string[] s = str.Split(' ');
+                    if (s != null && s[0] != "")
+                    {
+                        matrix[int.Parse(s[0]), int.Parse(s[1])] = int.Parse(s[2]);
+                    } 
+                }
+            }
+
+            int[,] answer = new int[n, n];
+            for (int i = 0; i < n; i++)
+            {
+                for (int j = 1; j < n; j++)
+                {
+                    if ( i != j)
+                    {
+                        answer[i, j] = 1000000000;
+                    }
+                }
+            }
+
+            Console.WriteLine("Ниже введите номер вершины из которой хотите найти минимальные пути:");
+            int versh = int.Parse(Console.ReadLine());
+            
+            int minimal = 1000000000, num = 0, value = 0;
+            List<int> list = new List<int>();  
+            for (int i = 1; i < n; i++)
+            {
+                list.Add(i);
+            }
+            
+            for (int k = 1; k < n; k++)
+            {
+                answer[versh, k] = matrix[versh, k];
+                if (minimal > answer[versh, k] && answer[versh, k] != 0)
+                {
+                    minimal = answer[versh, k];
+                    num = k;
+                }
+            }
+            list.Remove(versh);
+            versh = num;
+            answer[versh, 0] = minimal;
+            list.Remove(versh);
+
+            minimal = 1000000000;
+            for (int i = 1; i < n-1; i++)
+            {
+                for (int j = 1; j < n; j++)
+                {
+                    if (list.Contains(j))
+                    {
+                        if (matrix[versh, j] != 0)
+                        {
+                            answer[versh, j] = matrix[versh, j] + answer[versh, 0];
+                        }
+
+                        for (int k = 1; k < n; k++)
+                        {
+                            if (answer[k, j] != 0)
+                            {
+                                answer[versh, j] = Math.Min(answer[versh, j], answer[k, j]);
+                            }
+                        }
+
+                        if (minimal > answer[versh, j] && answer[versh, j] != 0)
+                        {
+                            minimal = answer[versh, j];
+                            num = j;
+                        }
+
+                    }
+                }
+                if (list.Count == 1)
+                {
+                    break;
+                }
+                list.Remove(versh);
+                versh = num;
+                answer[versh, 0] = minimal;
+                minimal = 1000000000;
+            }
+            for (int q = 1; q < n; q++)
+            {
+                Console.WriteLine($"До вершины №{q} длина минимального пути = {answer[q,0]}");
+            }
+            Console.ReadLine();
+        }
+    }
+}
+
+//Входные данные
+//1 2 7
+//1 5 9
+//1 6 2
+//1 7 5
+//2 1 7
+//2 3 5
+//2 4 4
+//2 5 8
+//2 6 2
+//3 2 5
+//3 4 2
+//3 5 9
+//3 7 1
+//4 2 4
+//4 3 2
+//4 5 3
+//4 7 8
+//5 1 9
+//5 2 8
+//5 3 9
+//5 4 3
+//5 6 3
+//5 7 5
+//6 1 2
+//6 2 2
+//6 5 3
+//7 1 5
+//7 3 1
+//7 4 8
+//7 5 5
