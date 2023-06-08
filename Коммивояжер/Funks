@@ -1,0 +1,74 @@
+using System;
+using System.Text;
+
+namespace qwerty
+{
+    internal class Funks
+    {
+        public static int[] Funk(int n)
+        {
+            int[] way = new int[n];
+            for (int i = 0; i < n; i++)
+            {
+                way[i] = i;
+            }
+
+            int[] shortest = new int[n];
+            Array.Copy(way, shortest, n);
+            int current_way = way_length(way);
+            int shortest_length = current_way;
+
+            while (next_way_bool(way))
+            {
+                current_way = way_length(way);
+                if (current_way < shortest_length)
+                {
+                    shortest_length = current_way;
+                    Array.Copy(way, shortest, n);
+                }
+            }
+
+            return shortest;
+        }
+
+        public static int way_length(int[] way)
+        {
+            int length = 0;
+            for (int i = 0; i < way.Length - 1; i++)
+            {
+                length += Program.arr[way[i], way[i + 1]];
+            }
+            length += Program.arr[way[way.Length - 1], way[0]];
+            return length;
+        }
+
+        static bool next_way_bool(int[] arr)
+        {
+            int i = arr.Length - 2;
+            while (i >= 0 && arr[i] >= arr[i + 1])
+            {
+                i--;
+            }
+            if (i < 0)
+            {
+                return false;
+            }
+
+            int j = arr.Length - 1;
+            while (arr[j] <= arr[i])
+            {
+                j--;
+            }
+
+            Change(arr, i, j);
+            Array.Reverse(arr, i + 1, arr.Length - i - 1);
+            return true;
+        }
+        static void Change(int[] arr, int i, int j)
+        {
+            int t = arr[i];
+            arr[i] = arr[j];
+            arr[j] = t;
+        }
+    }
+}
