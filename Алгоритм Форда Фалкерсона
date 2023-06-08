@@ -1,0 +1,163 @@
+using System;
+using System.Text;
+using System.IO;
+using System.Collections.Generic;
+
+namespace ConsoleApplication26
+{
+    class Program
+    {
+        static void Main()
+        {
+            int[,] matrix;
+            int dim = 0;
+            int max = 0;
+            int n = 0;
+            using (StreamReader sr = new StreamReader(@"C:\Users\User\Desktop\arr.txt", Encoding.UTF8) )
+            {
+                dim = Convert.ToInt32(sr.ReadLine());
+                for (int i = 0; i < dim; i++)
+                {
+                    string[] value = sr.ReadLine().Split(" ");
+                    int temp = Math.Max(Convert.ToInt32(value[0]), Convert.ToInt32(value[1]));
+                    n = Math.Max(Convert.ToInt32(temp), n);
+                    max += Convert.ToInt32(value[2]);
+                }
+
+            }
+            n++;
+            max++;
+            using (StreamReader sr = new StreamReader(@"C:\Users\User\Desktop\arr.txt", Encoding.UTF8))
+            {
+                sr.ReadLine();
+                matrix = new int[n, n];
+
+                for (int i = 0; i < dim; i++)
+                {
+                    string[] value = sr.ReadLine().Split(" ");
+                    matrix[Convert.ToInt32(value[0]), Convert.ToInt32(value[1])] = Convert.ToInt32(value[2]);
+                }
+
+            }
+            int[,]start_matrix = new int[n,n];
+            for (int i = 0; i < n; i++)
+            {
+                for (int j = 0; j < n; j++)
+                {
+                    start_matrix[i,j] = matrix[i,j];
+                }
+            }
+            for (int i = 0; i<n; i++)
+            {
+                for(int j = 0; j<n; j++)
+                {
+                    Console.Write(matrix[i,j] + " ");
+                }
+                Console.WriteLine();
+            }
+            int[][] metki = new int[n][];
+            metki[1] = new[] { max, -1 };
+            for (int i = 2; i < n; i++)
+            {
+                metki[i] = new int[2];
+            }
+
+            int h = 1;
+            int Chj = 0;
+            int a = 0;
+            List<int> Sh = new List<int>();
+            int f = max;
+            List<int> F = new List<int>(); 
+            do
+            {
+                
+                metki[1] = new[] { max, -1 };
+                for (int i = 2; i < n; i++)
+                {
+                    metki[i][0] = 0;
+                    metki[i][1] = 0;
+                }
+                while (h != n - 1)
+                {
+                    Sh.Clear();
+                    Chj = 0;
+                    for (int j = 1; j < n; j++)
+                    {
+                        if (matrix[h, j] != 0 && metki[j][0] == 0)
+                        {
+                            Sh.Add(j);
+                            if (matrix[h, j] > Chj)
+                            {
+                                Chj = matrix[h, j];
+                                a = j;
+                            }
+                        }
+                    }
+                    
+                    if (Sh.Count == 0)
+                    {
+                        if (h == 1)
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            matrix[h, a] = 0;
+                            h = metki[h][1];
+                        }
+                    }
+                    else
+                    {
+                        metki[a][0] = matrix[h, a];
+                        metki[a][1] = h;
+                        h = a;
+                    }
+                }
+                for (int i = 1; i < n; i++)
+                {
+                    if (metki[i][0] != 0)
+                    {
+                        f = Math.Min(metki[i][0], f);
+                    }
+                }
+                Console.WriteLine("Максимальный поток = " + f);
+                if (f != max)
+                {
+                    F.Add(f);
+                    List<int> s = new List<int>();
+                    for (int i = 2; i < n; i++)
+                    {
+                        if (metki[i][0] != 0)
+                        {
+                            matrix[metki[i][1], i] -= f;
+                            matrix[i, metki[i][1]] += f;
+                            metki[i][0] = 0;
+                            metki[i][1] = 0;
+                        }
+
+                    }
+                }
+
+                h = 1;
+                f = max;
+            }
+            while (Sh.Count != 0) ;
+            int max_stream = F.Sum();
+            Console.WriteLine("Максимальный поток = " + max_stream);
+
+        }
+    }
+}
+//Содержимое файла:
+//8
+//1 2 20
+//1 3 30
+//1 4 10
+//2 3 40
+//2 5 30
+//3 4 10
+//3 5 20
+//4 5 20
+
+
+
